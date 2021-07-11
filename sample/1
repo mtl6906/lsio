@@ -1,0 +1,102 @@
+/*
+
+InputStream
+
+//	data
+
+	buffer : Buffer
+
+//	method
+
+	bind(Reader &reader) ：void
+
+	read() :
+
+
+*/
+
+//	testcase
+
+#include "ls/epoll/Tool.h"
+#include "ls/io/InputStream.h"
+#include "ls/Pool.h"
+
+using namespace ls;
+
+struct Connection
+{
+	Pool<Buffer> &pool;
+	Buffer *sendBuffer;
+	Buffer *recvBuffer;
+	Connection(Pool<Buffer> &pool) : pool(pool), sendBuffer(pool.get()), recvBuffer(pool.get())
+	{
+
+	}
+	~Connection()
+	{
+		pool.put(sendBuffer);
+		pool.put(recvBuffer);
+	}
+};
+
+int main()
+{
+	net::Server server("tcp://127.0.0.1:8080");
+	epoll::Tool et(100);
+	Pool<Buffer> pool;
+	map<int, unique_ptr<Connection>> connectionMapper;
+	et.add(server.getFd());
+	for(;;)
+	{
+		int n = et.wait(-1);
+		for(int i=0;i<n;++i)
+		{
+			auto &event = et.event(i);
+			if(event.fd == server.getFd())
+			{
+				int connfd = server.accept();
+				et.add(connfd, EPOLLET | EPOLLIN);
+				connectionMapper[connfd] = new Connection(pool);
+			}
+			else if(event.events & EPOLLIN)
+			{
+				auto connection = connectionMapper[event.fd];
+				Request request;
+				net::InputStream nis(event.fd, connection -> recvBuffer);
+				try
+				{
+					nis >> request;
+				}
+				catch(http::Exception &e)
+				{
+					Trace(e);
+					if(e.getCode() != ENOREADY)
+						connectionMapper.erase(event.fd);
+					continue;
+				}
+				cout << *request << endl;
+			}
+		}
+	}
+	return 0;
+}
+
+/*
+
+	InputStream 用来定义输入源, 提供参数构造对应的fd, 提供read接口读取数据, 提供外置buffer
+
+	目前暂定的InputStream子类有, file::InputStream, net::InputStream
+
+	Server主要是提供accept功能, 不具备io读写能力
+
+	net::InputStream仅仅在需要使用时通过指定buffer和对应的fd构造, 使用完毕通常自动析构,
+
+	构造一个InputStream通常不会有特别的代价, 其对象本身是无状态的, 仅仅是对buffer和fd包装了
+
+	操作的运算集合, buffer和fd都可以另外管理.
+
+	同理, 可以随时用OutputStream对象对一个fd和buffer进行包装
+
+	Object 实现对应的友元操作符 >>, 实现对象的读取方式
+
+*/
