@@ -72,7 +72,7 @@ namespace ls
 
         string InputStream::split(int n)
         {
-	  if(text.size() < n)
+	  if(buffer -> size() < n)
 		  throw Exception(Exception::LS_ENOCONTENT);
           string text(n, '\0');
 	  buffer -> pop(text);
