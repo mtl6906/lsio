@@ -1,5 +1,6 @@
 #include "ls/io/OutputStream.h"
 #include "ls/Exception.h"
+#include "ls/DefaultLogger.h"
 
 using namespace std;
 
@@ -14,9 +15,13 @@ namespace ls
 
         void OutputStream::reset(Writer *writer)
         {
-            buffer -> clear();
             this -> writer = writer;
         }
+
+	void OutputStream::reset(Buffer *buffer)
+	{
+	    this -> buffer = buffer;
+	}
 
         void OutputStream::write()
         {
@@ -54,7 +59,7 @@ namespace ls
 
         Buffer *OutputStream::getBuffer()
         {
-            return buffer.get();
+            return buffer;
         }
     }
 }

@@ -15,9 +15,13 @@ namespace ls
 
         void InputStream::reset(Reader *reader)
         {
-            buffer -> clear();
             this -> reader = reader;
         }
+
+	void InputStream::reset(Buffer *buffer)
+	{
+	    this -> buffer = buffer;
+	}
 
         void InputStream::read()
         {
@@ -72,12 +76,17 @@ namespace ls
 
         string InputStream::split(int n)
         {
-	  if(buffer -> size() < n)
+	    if(buffer -> size() < n)
 		  throw Exception(Exception::LS_ENOCONTENT);
-          string text(n, '\0');
-	  buffer -> pop(text);
-          return text;
+            string text(n, '\0');
+	    buffer -> pop(text);
+            return text;
         }
+
+	Buffer *InputStream::getBuffer()
+	{
+	    return buffer;
+	}
 
         bool InputStream::full()
         {

@@ -3,6 +3,7 @@
 
 #include "ls/Buffer.h"
 #include "ls/io/Writer.h"
+#include "ls/file/File.h"
 #include "memory"
 
 namespace ls
@@ -14,6 +15,7 @@ namespace ls
 			public:
 				OutputStream(Writer *writer, Buffer *buffer);
 				void reset(Writer *writer);
+				void reset(Buffer *buffer);
 				void write();
 				void tryWrite();
 				void append(const std::string &text);
@@ -21,7 +23,7 @@ namespace ls
 				Buffer *getBuffer();
 			protected:
 				Writer *writer;
-				std::unique_ptr<Buffer> buffer;
+				Buffer *buffer;
 		};
 	}
 }
