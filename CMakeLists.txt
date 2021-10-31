@@ -16,7 +16,7 @@ add_library(lsio SHARED ${SRC})
 
 add_executable(testcase ${SRC_SAMPLE} ${SRC})
 
-target_link_libraries(testcase lsbuffer lsexception lsfile lscstring lslogger lstime)
+target_link_libraries(testcase lsbuffer lsexception lscstring lslogger lstime)
 	
 install(TARGETS lsio DESTINATION lib)
 

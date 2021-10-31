@@ -3,7 +3,6 @@
 
 #include "ls/Buffer.h"
 #include "ls/io/Writer.h"
-#include "ls/file/File.h"
 #include "memory"
 
 namespace ls
