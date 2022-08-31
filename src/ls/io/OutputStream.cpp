@@ -23,38 +23,46 @@ namespace ls
 	    this -> buffer = buffer;
 	}
 
-        void OutputStream::write()
+        int OutputStream::write()
         {
             int n = 0;
             while(buffer -> size() > 0)
             {
                 n = writer -> write(buffer -> begin(), buffer -> size());
-                buffer -> moveOffset(n);
+      		if(n < 0)
+			return n;
+      		buffer -> moveOffset(n);
             }
+	    return Exception::LS_OK;
         }
 
-        void OutputStream::tryWrite()
+        int OutputStream::tryWrite()
         {
             int n = 0;
             while(buffer -> size() > 0)
             {
                 n = writer -> tryWrite(buffer -> begin(), buffer -> size());
+		if(n < 0)
+			return n;
                 buffer -> moveOffset(n);
             }
+	    return Exception::LS_OK;
         }
 
-        void OutputStream::append(const string &text)
+        int OutputStream::append(const string &text)
         {
             if(text.size() > buffer -> restSize())
-                throw Exception(Exception::LS_EFULL);
+		return Exception::LS_EFULL;
             buffer -> push(text);
+	    return Exception::LS_OK;
         }
 
-      	void OutputStream::append(const char *data, int len)
+      	int OutputStream::append(const char *data, int len)
       	{
       	    if(len > buffer -> restSize())
-      	        throw Exception(Exception::LS_EFULL);
+      	        return Exception::LS_EFULL;
       	    buffer -> push(data, len);
+	    return Exception::LS_OK;
       	}
 
         Buffer *OutputStream::getBuffer()

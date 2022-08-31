@@ -15,12 +15,12 @@ namespace ls
 				InputStream(Reader *reader, Buffer *buffer);
 				void reset(Reader *reader);
 				void reset(Buffer *buffer);
-				void read();
-				void tryRead();
-				std::string splitOf(const char *endMark, int len);
-				std::string split(const std::string &endMark, bool with = false);
+				int read();
+				int tryRead();
+				std::string splitOf(int &ec, const char *endMark, int len);
+				std::string split(int &ec, const std::string &endMark, bool with = false);
 				std::string split();
-				std::string split(int n);
+				std::string split(int &ec, int n);
 				Buffer *getBuffer();
 				bool full();
 			protected:

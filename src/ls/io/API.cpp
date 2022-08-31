@@ -10,36 +10,43 @@ namespace ls
 	{
 		API api;
 
-		void _read(InputStream &in, int mode)
+		int _read(InputStream &in, int mode)
 		{
 			if(mode & LS_IO_READ)
-				in.read();
-			else
-				in.tryRead();
+				return in.read();
+			return in.tryRead();
 		}
 
-		void _write(OutputStream &out, int mode)
+		int _write(OutputStream &out, int mode)
 		{
+			int n;
 			if(mode & LS_IO_WRITE)
-				out.write();
+				n = out.write();
 			else
-				out.tryWrite();
-			out.getBuffer() -> clear();
+				n = out.tryWrite();
+			if(n == Exception::LS_OK)
+				out.getBuffer() -> clear();
+			return n;
 		}
 
-		void API::move(Reader *reader, Writer *writer, Buffer *buffer, int mode)
+		int API::move(Reader *reader, Writer *writer, Buffer *buffer, int mode)
 		{
 			io::InputStream in(reader, buffer);
 			io::OutputStream out(writer, buffer);
+			int n = 0;
 			if(buffer -> size() > 0)
 			{
-				_write(out, mode);
+				if((n = _write(out, mode)) < 0)
+					return n;
 			}
 			for(;;)
 			{
-				_read(in, mode);
-				_write(out, mode);
+				if((n = _read(in, mode)) < 0)
+					return n;
+				if((n = _write(out, mode)) < 0)
+					return n;
 			}
+			return Exception::LS_OK;
 		}
 	}
 }

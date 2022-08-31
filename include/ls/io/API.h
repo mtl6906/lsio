@@ -15,7 +15,7 @@ namespace ls
 		class API
 		{
 			public:
-				void move(Reader *reader, Writer *writer, Buffer *buffer = new Buffer(), int mode = LS_IO_READ | LS_IO_WRITE);
+				int move(Reader *reader, Writer *writer, Buffer *buffer = new Buffer(), int mode = LS_IO_READ | LS_IO_WRITE);
 		};	
 		extern API api;
 	}

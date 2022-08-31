@@ -15,10 +15,10 @@ namespace ls
 				OutputStream(Writer *writer, Buffer *buffer);
 				void reset(Writer *writer);
 				void reset(Buffer *buffer);
-				void write();
-				void tryWrite();
-				void append(const std::string &text);
-				void append(const char *data, int len);
+				int write();
+				int tryWrite();
+				int append(const std::string &text);
+				int append(const char *data, int len);
 				Buffer *getBuffer();
 			protected:
 				Writer *writer;

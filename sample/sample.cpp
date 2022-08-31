@@ -9,7 +9,8 @@ int main()
 	Buffer *buffer = new Buffer();
 	buffer -> push("12345678");
 	auto in = io::factory.makeInputStream(nullptr, buffer);
-	auto text = in -> split(5);
+	int ec;
+	string text = in -> split(ec, 5);
 	cout << text << endl;
 	delete in;
 	return 0;
